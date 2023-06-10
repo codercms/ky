@@ -84,6 +84,9 @@ export class Ky {
 				ky.request.headers.set('accept', ky.request.headers.get('accept') || mimeType);
 
 				const awaitedResult = await result;
+
+				// Do not return cloned response
+				// because it doesn't work in case when Response object is hooked via Proxy (e.g. SvelteKit)
 				const response = awaitedResult.clone();
 
 				if (type === 'json') {
@@ -91,18 +94,18 @@ export class Ky {
 						return '';
 					}
 
-					const arrayBuffer = await response.clone().arrayBuffer();
+					const arrayBuffer = await response.arrayBuffer();
 					const responseSize = arrayBuffer.byteLength;
 					if (responseSize === 0) {
 						return '';
 					}
 
 					if (options.parseJson) {
-						return options.parseJson(await response.text());
+						return options.parseJson(await awaitedResult.text());
 					}
 				}
 
-				return response[type]();
+				return (awaitedResult as Response)[type]();
 			};
 		}
 
@@ -297,7 +300,7 @@ export class Ky {
 		}
 
 		if (this._options.timeout === false) {
-			return this._options.fetch(this.request.clone());
+			return this._options.fetch(this.request.clone(), { headers: this.request.headers });
 		}
 
 		return timeout(this.request.clone(), this.abortController, this._options as TimeoutOptions);
