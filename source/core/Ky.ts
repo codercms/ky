@@ -300,7 +300,7 @@ export class Ky {
 		}
 
 		if (this._options.timeout === false) {
-			return this._options.fetch(this.request.clone(), { headers: this.request.headers });
+			return this._options.fetch(this.request.clone(), this._options);
 		}
 
 		return timeout(this.request.clone(), this.abortController, this._options as TimeoutOptions);
