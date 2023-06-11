@@ -1,4 +1,5 @@
 import {TimeoutError} from '../errors/TimeoutError.js';
+import {supportsRequestStreams} from "../core/constants.js";
 
 export type TimeoutOptions = {
 	timeout: number;
@@ -11,7 +12,7 @@ export default async function timeout(
 	abortController: AbortController | undefined,
 	options: TimeoutOptions,
 ): Promise<Response> {
-	return new Promise((resolve, reject) => {
+	return new Promise(async (resolve, reject) => {
 		const timeoutId = setTimeout(() => {
 			if (abortController) {
 				abortController.abort();
@@ -23,11 +24,32 @@ export default async function timeout(
 		console.log("request body", {
 			body: request.body,
 			req: request,
-			props: {...request},
-		})
+		});
+
+		let body;
+		if (request.headers.has("content-type")) {
+			if (supportsRequestStreams) {
+				body = request.body;
+			} else {
+				body = await request.arrayBuffer();
+			}
+		}
 
 		void options
-			.fetch(request.url, {...request})
+			.fetch(request.url, {
+				body: body,
+				cache: request.cache,
+				credentials: request.credentials,
+				headers: request.headers,
+				integrity: request.integrity,
+				keepalive: request.keepalive,
+				method: request.method,
+				mode: request.mode,
+				redirect: request.redirect,
+				referrer: request.referrer,
+				referrerPolicy: request.referrerPolicy,
+				signal: request.signal,
+			})
 			.then(resolve)
 			.catch(reject)
 			.then(() => {
