@@ -21,12 +21,7 @@ export default async function timeout(
 		}, options.timeout);
 
 		void options
-			.fetch(request, {
-				headers: request.headers,
-				credentials: request.credentials,
-				method: request.method,
-				mode: request.mode,
-			})
+			.fetch(request)
 			.then(resolve)
 			.catch(reject)
 			.then(() => {
