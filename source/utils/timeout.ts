@@ -20,19 +20,21 @@ export default async function timeout(
 			reject(new TimeoutError(request));
 		}, options.timeout);
 
-		const opts = options as RequestInit;
-
-		opts.headers = request.headers;
-		opts.credentials = request.credentials;
-		opts.mode = request.mode;
-
-		console.log("fetch called", {
-			req: request,
-			opts,
-		});
-
 		void options
-			.fetch(request, opts)
+			.fetch(request.url, {
+				body: request.body,
+				cache: request.cache,
+				credentials: request.credentials,
+				headers: request.headers,
+				integrity: request.integrity,
+				keepalive: request.keepalive,
+				method: request.method,
+				mode: request.mode,
+				redirect: request.redirect,
+				referrer: request.referrer,
+				referrerPolicy: request.referrerPolicy,
+				signal: request.signal
+			})
 			.then(resolve)
 			.catch(reject)
 			.then(() => {
