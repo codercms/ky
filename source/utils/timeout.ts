@@ -23,6 +23,7 @@ export default async function timeout(
 		console.log("request body", {
 			body: request.body,
 			req: request,
+			props: {...request},
 		})
 
 		void options
