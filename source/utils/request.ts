@@ -25,6 +25,7 @@ export const requestToInitParams = async (request: Request): Promise<RequestInit
 	};
 
 	if (body && supportsRequestStreams) {
+		// @ts-ignore
 		opts.duplex = request.duplex ?? 'half';
 	}
 
