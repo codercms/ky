@@ -1,5 +1,6 @@
 import {TimeoutError} from '../errors/TimeoutError.js';
 import {supportsRequestStreams} from "../core/constants.js";
+import {requestToInitParams} from "./request.js";
 
 export type TimeoutOptions = {
 	timeout: number;
@@ -21,35 +22,8 @@ export default async function timeout(
 			reject(new TimeoutError(request));
 		}, options.timeout);
 
-		console.log("request body", {
-			body: request.body,
-			req: request,
-		});
-
-		let body;
-		if (request.headers.has("content-type")) {
-			if (supportsRequestStreams) {
-				body = request.body;
-			} else {
-				body = await request.arrayBuffer();
-			}
-		}
-
 		void options
-			.fetch(request.url, {
-				body: body,
-				cache: request.cache,
-				credentials: request.credentials,
-				headers: request.headers,
-				integrity: request.integrity,
-				keepalive: request.keepalive,
-				method: request.method,
-				mode: request.mode,
-				redirect: request.redirect,
-				referrer: request.referrer,
-				referrerPolicy: request.referrerPolicy,
-				signal: request.signal,
-			})
+			.fetch(request.url, await requestToInitParams(request))
 			.then(resolve)
 			.catch(reject)
 			.then(() => {
