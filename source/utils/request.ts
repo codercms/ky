@@ -3,12 +3,10 @@ import {supportsRequestStreams} from "../core/constants.js";
 export const requestToInitParams = async (request: Request): Promise<RequestInit> => {
 	let body;
 
-	if (request.headers.has("content-type")) {
-		if (supportsRequestStreams) {
-			body = request.body;
-		} else {
-			body = await request.blob();
-		}
+	if (supportsRequestStreams) {
+		body = request.body;
+	} else {
+		body = await request.blob();
 	}
 
 	const opts: RequestInit = {
