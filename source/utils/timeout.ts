@@ -1,5 +1,4 @@
 import {TimeoutError} from '../errors/TimeoutError.js';
-import {requestToInitParams} from "./request.js";
 
 export type TimeoutOptions = {
 	timeout: number;
@@ -21,8 +20,11 @@ export default async function timeout(
 			reject(new TimeoutError(request));
 		}, options.timeout);
 
+		const opts = options as RequestInit;
+		opts.headers = request.headers;
+
 		void options
-			.fetch(request.url, await requestToInitParams(request))
+			.fetch(request.url, opts)
 			.then(resolve)
 			.catch(reject)
 			.then(() => {
