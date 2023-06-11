@@ -20,11 +20,13 @@ export default async function timeout(
 			reject(new TimeoutError(request));
 		}, options.timeout);
 
-		const opts = options as RequestInit;
-		opts.headers = request.headers;
-
 		void options
-			.fetch(request.url, opts)
+			.fetch(request, {
+				headers: request.headers,
+				credentials: request.credentials,
+				method: request.method,
+				mode: request.mode,
+			})
 			.then(resolve)
 			.catch(reject)
 			.then(() => {
