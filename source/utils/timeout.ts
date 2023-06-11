@@ -1,5 +1,4 @@
 import {TimeoutError} from '../errors/TimeoutError.js';
-import {supportsRequestStreams} from "../core/constants.js";
 import {requestToInitParams} from "./request.js";
 
 export type TimeoutOptions = {
