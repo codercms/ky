@@ -20,6 +20,11 @@ export default async function timeout(
 			reject(new TimeoutError(request));
 		}, options.timeout);
 
+		console.log("request body", {
+			body: request.body,
+			req: request,
+		})
+
 		void options
 			.fetch(request.url, {
 				body: request.body,
